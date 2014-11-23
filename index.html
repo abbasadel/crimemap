@@ -83,10 +83,21 @@ margin-bottom: -4px;
 	    zoom: 6,
 	    center: {lat: 21.8357675, lng: 30.7956597}
 	  });
+    map.data.loadGeoJson('/uji.egypt/egypt.geojson');
+    map.data.loadGeoJson('/uji.egypt/cairo.geojson');
+
+    setTimeout(function(){
+    console.log(map.data);
+    map.data.forEach(function(feature){
+      console.log(feature); 
+    });
+}, 2000);
+    
+    //map.data.loadGeoJson('/uji.egypt/merge.json');
 
 	  // Load a GeoJSON from the same server as our demo.
 	  //map.data.loadGeoJson('https://storage.googleapis.com/maps-devrel/google.json');
-	  map.data.loadGeoJson('/gis/reversexy.json');
+	  //map.data.loadGeoJson('/uji.egypt/merge.json');
 	}
 
 	google.maps.event.addDomListener(window, 'load', initialize);
