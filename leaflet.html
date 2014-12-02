@@ -13,7 +13,7 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-  <script src="leaflet-pip.min.js"></script>
+  <script src="leaflet-pip.js"></script>
 
 
   <script>
@@ -40,17 +40,12 @@
   }).responseJSON;
 
   egypt = $.ajax({
-    url:"http://local:8000/uji.egypt/egypt.geojson",
+    url:"http://local:8000/uji.egypt/egypt-mploygon.geojson",
     dataType:"json",
     async:false
   }).responseJSON;
 
-  var baseballIcon = L.icon({
-    iconUrl: 'baseball-marker.png',
-    iconSize: [32, 37],
-    iconAnchor: [16, 37],
-    popupAnchor: [0, -28]
-  });
+
 
   function popup(feature, layer) {
     layer.bindPopup(feature.properties.name + " " +feature.properties.incidents);
@@ -63,15 +58,20 @@
 
   console.log(incidents.length);
   jQuery.each(incidents, function(key, val){
-    var latLng = new  L.latLng( val.incident.locationlatitude, val.incident.locationlongitude );
-    var marker = L.marker(latLng).addTo(map);
+    //console.log(val);
+    var latLng = new  L.latLng( val.incident.locationlatitude , val.incident.locationlongitude);
+    //lat: 31.21564, lng: 29.95527
+    //var latLng = new  L.latLng( 31.21564,29.95527);
+    //var marker = L.marker(latLng).addTo(map);
     // marker.bindPopup(function(){
     //   console.log(val);
+    //  });
+    // marker.on('click', function(e){
+    //   //console.log(val.incident.locationname);
+    //   console.log(e.latlng);
     // });
-    marker.on('click', function(){
-      console.log(val.incident.locationname);
-    })
     var results = leafletPip.pointInLayer(latLng, egyptLayer, true);
+    //console.log(results);
     //console.log('incident: ' + key);
     jQuery.each(results,function(key, val){
       if(val.feature.properties.incidents){
@@ -81,16 +81,17 @@
         val.feature.properties.incidents.push(val);
       }
       //console.log(val.feature.properties);
-      console.log(val.feature.properties.name +  ' ' + val.feature.properties.incidents.length);
+      //console.log(val.feature.properties.name +  ' ' + val.feature.properties.incidents.length);
       //val.setStyle()
     });
+    //if(key > 1) return false;
   });
 
 // egyptLayer.eachLayer(function(layer){
 //   layer.bindPopup = popup;
 // });
   $.each(egyptLayer.getLayers(), function(k,layer){
-    console.log(layer);
+    //console.log(layer);
     feature = layer.feature;
     count = 0;
     if(feature.properties.incidents){
