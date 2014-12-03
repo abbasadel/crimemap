@@ -1,23 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet GeoJSON Example</title>
+  <title>Egypt Crime Map</title>
   <meta charset="utf-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="leaflet.css" />
+  <style>
 
-  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  html, body, #map {
+    height: 100%;
+  }
+
+  .info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+  }
+  .info h4 {
+    margin: 0 0 5px;
+    color: #777;
+  }
+
+  .legend {
+    text-align: left;
+    line-height: 18px;
+    color: #555;
+  }
+  .legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+  </style>
 </head>
 <body>
-  <div id="map" style="width: 100%; min-height: 900px"></div>
+  <div id="map" style="width:100%"></div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="leaflet-src.js"></script>
   <script src="leaflet-pip.js"></script>
 
 
   <script>
-  var map = L.map('map').setView([30.7956597,21.8357675], 6);
+  var map = L.map('map').setView([30.047732, 30.234897], 8);
 
   L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -52,114 +86,120 @@
     console.log(feature.properties);
   }
 
+  // get color depending on population density value
+  function getColor(d) {
+    //console.log(d);
+    if(d.incidents){
+      d = d.incidents.length
+    }
+    //console.log(d);
+    return d > 740 ? '#800026' :
+    d > 320  ? '#BD0026' :
+    d > 160  ? '#E31A1C' :
+    d > 80  ? '#FC4E2A' :
+    d > 40   ? '#FD8D3C' :
+    d > 20   ? '#FEB24C' :
+    d > 10   ? '#FED976' :
+    '#FFEDA0';
+  }
+
+  function style(feature) {
+    return {
+      weight: 2,
+      opacity: 1,
+      color: 'white',
+      dashArray: '3',
+      fillOpacity: 0.7,
+      fillColor: getColor(feature.properties.incidents.length)
+    };
+  }
+
+  function style2(feature){
+    // if(feature.properties.incidents){
+    //   console.log(1-(feature.properties.incidents.length *10/incidents.length).toFixed(2));
+    // }
+    //console.log(feature.properties.incidents.length *100/incidents.length)
+      return {
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7,
+        fillColor: getColor(feature.properties)
+        // function(){
+        //   if(feature.properties.incidents){
+        //     return 1-(feature.properties.incidents.length *10/incidents.length).toFixed(2);
+        //   }
+        //
+        //   return 0.9;
+        // }
+      }
+  }
+
   cairoLayer = L.geoJson(cairo);//.addTo(map);
-  egyptLayer = L.geoJson(egypt);//.addTo(map);
+  egyptLayer = L.geoJson(egypt,
+    {
+      style: style2,
+    }
+  );//.addTo(map);
 
 
-  console.log(incidents.length);
+
+  incidents.length
   jQuery.each(incidents, function(key, val){
     //console.log(val);
     var latLng = new  L.latLng( val.incident.locationlatitude , val.incident.locationlongitude);
-    //lat: 31.21564, lng: 29.95527
-    //var latLng = new  L.latLng( 31.21564,29.95527);
-    //var marker = L.marker(latLng).addTo(map);
-    // marker.bindPopup(function(){
-    //   console.log(val);
-    //  });
-    // marker.on('click', function(e){
-    //   //console.log(val.incident.locationname);
-    //   console.log(e.latlng);
-    // });
+
     var results = leafletPip.pointInLayer(latLng, egyptLayer, true);
-    //console.log(results);
-    //console.log('incident: ' + key);
-    jQuery.each(results,function(key, val){
-      if(val.feature.properties.incidents){
-        val.feature.properties.incidents.push(val);
+
+    jQuery.each(results,function(key, layer){
+      if(layer.feature.properties.incidents){
+        layer.feature.properties.incidents.push(val);
       }else{
-        val.feature.properties.incidents = [];
-        val.feature.properties.incidents.push(val);
+        layer.feature.properties.incidents = [];
+        layer.feature.properties.incidents.push(val);
       }
-      //console.log(val.feature.properties);
-      //console.log(val.feature.properties.name +  ' ' + val.feature.properties.incidents.length);
-      //val.setStyle()
+
     });
-    //if(key > 1) return false;
+    //if(key > 500) return false;
   });
 
-// egyptLayer.eachLayer(function(layer){
-//   layer.bindPopup = popup;
-// });
+
   $.each(egyptLayer.getLayers(), function(k,layer){
-    //console.log(layer);
     feature = layer.feature;
     count = 0;
     if(feature.properties.incidents){
       count = feature.properties.incidents.length;
     }
     layer.bindPopup(feature.properties.name + " " +count);
+
+    egyptLayer.resetStyle(layer);
+
   });
-  //egyptLayer.options.onEachFeature(popup);
+
   egyptLayer.addTo(map);
-  //console.log(egyptLayer);
+  var legend = L.control({position: 'bottomright'});
+  legend.onAdd = function (map) {
 
+    var div = L.DomUtil.create('div', 'info legend'),
+    grades = [10, 20, 40, 80, 160, 320, 740],
+    labels = [],
+    from, to;
 
+    for (var i = 0; i < grades.length; i++) {
+      from = grades[i];
+      to = grades[i + 1];
 
-  // results is an array of L.Polygon objects containing that point
+      labels.push(
+        '<i style="background:' + getColor(from + 1) + '"></i> ' +
+        from + (to ? '&ndash;' + to : '+'));
+      }
 
+      div.innerHTML = labels.join('<br>');
+      return div;
+    };
 
-  // function onEachFeature(feature, layer) {
-  //   var popupContent = "<p>I started out as a GeoJSON " +
-  //   feature.geometry.type + ", but now I'm a Leaflet vector!</p>";
-  //
-  //   if (feature.properties && feature.properties.popupContent) {
-  //     popupContent += feature.properties.popupContent;
-  //   }
-  //
-  //   layer.bindPopup(popupContent);
-  // }
-  //
-  // L.geoJson([bicycleRental, campus], {
-  //
-  //   style: function (feature) {
-  //     return feature.properties && feature.properties.style;
-  //   },
-  //
-  //   onEachFeature: onEachFeature,
-  //
-  //   pointToLayer: function (feature, latlng) {
-  //     return L.circleMarker(latlng, {
-  //       radius: 8,
-  //       fillColor: "#ff7800",
-  //       color: "#000",
-  //       weight: 1,
-  //       opacity: 1,
-  //       fillOpacity: 0.8
-  //     });
-  //   }
-  // }).addTo(map);
-  //
-  // L.geoJson(freeBus, {
-  //
-  //   filter: function (feature, layer) {
-  //     if (feature.properties) {
-  //       // If the property "underConstruction" exists and is true, return false (don't render features under construction)
-  //       return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-  //     }
-  //     return false;
-  //   },
-  //
-  //   onEachFeature: onEachFeature
-  // }).addTo(map);
-  //
-  // var coorsLayer = L.geoJson(coorsField, {
-  //
-  //   pointToLayer: function (feature, latlng) {
-  //     return L.marker(latlng, {icon: baseballIcon});
-  //   },
-  //
-  //   onEachFeature: onEachFeature
-  // }).addTo(map);
+    legend.addTo(map);
 
 </script>
 </body>
