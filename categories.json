@@ -1,0 +1,645 @@
+{
+  "payload": {
+    "domain": "http://zabatak.com/",
+    "categories": [
+      {
+        "category": {
+          "id": "101",
+          "parent_id": "0",
+          "title": "سرقه",
+          "description": "Theft",
+          "color": "ff0000",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 125,
+            "category_title": "سرقه",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 126,
+            "category_title": "Theft",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "118",
+          "parent_id": "0",
+          "title": "مرور",
+          "description": "Traffic",
+          "color": "b4e61d",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 159,
+            "category_title": "مرور",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 160,
+            "category_title": "Traffic",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "110",
+          "parent_id": "108",
+          "title": "تجاره سلاح - تجاره مخدرات",
+          "description": "تجاره سلاح - تجاره مخدرات",
+          "color": "a249a4",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 143,
+            "category_title": "تجاره سلاح - تجاره مخدرات",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 144,
+            "category_title": "Arms trade - Drug trade",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "109",
+          "parent_id": "108",
+          "title": "ارهاب مواطنين - تعذيب - جرائم قتل - اطلاق اعيرة نارية",
+          "description": "ارهاب مواطنين - تعذيب - جرائم قتل - اطلاق اعيرة نارية",
+          "color": "00ff00",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 141,
+            "category_title": "ارهاب مواطنين - تعذيب - جرائم قتل - اطلاق اعيرة نارية",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 142,
+            "category_title": "Citizens terrorism - Torture - Murder - Firing Shots",
+            "category_description": null
+          }
+        }
+      },
+
+      {
+        "category": {
+          "id": "112",
+          "parent_id": "111",
+          "title": "مفقودات اخرى",
+          "description": "Other Missing",
+          "color": "3e47cc",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 147,
+            "category_title": "مفقودات اخرى",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 148,
+            "category_title": "Other Missing",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "113",
+          "parent_id": "0",
+          "title": "فساد",
+          "description": "Corruption",
+          "color": "3e47cc",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 149,
+            "category_title": "فساد",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 150,
+            "category_title": "Corruption",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "114",
+          "parent_id": "113",
+          "title": "رشوه وتربح وظيفى ومحاباة",
+          "description": "Bribery, Job Profiteering, and Favoritism",
+          "color": "ff8127",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 151,
+            "category_title": "رشوه وتربح وظيفى ومحاباة",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 152,
+            "category_title": "Bribery, Job Profiteering, and Favoritism",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "115",
+          "parent_id": "113",
+          "title": "اهمال وظيفى",
+          "description": "Careless behavior",
+          "color": "ed1c23",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 153,
+            "category_title": "اهمال وظيفى",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 154,
+            "category_title": "Careless behavior",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "116",
+          "parent_id": "113",
+          "title": "فساد محليات (القاء قمامة - كهرباء – مياه - رصف طرق)",
+          "description": "Corruption Localities (Throwing trash - Electricity - Water - Paving roads)",
+          "color": "22b14d",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 155,
+            "category_title": "فساد محليات (القاء قمامة - كهرباء – مياه - رصف طرق)",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 156,
+            "category_title": "Corruption Localities (Throwing trash - Electricity - Water - Paving roads)",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "117",
+          "parent_id": "113",
+          "title": "غش تجارى(غش التسعيرة - منتجات فاسده - تهريب دقيق مدعم)",
+          "description": "Commercial fraud (cheating pricing - Products corrupt - the smuggling of subsidized flour)",
+          "color": "a249a4",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 157,
+            "category_title": "غش تجارى(غش التسعيرة - منتجات فاسده - تهريب دقيق مدعم)",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 158,
+            "category_title": "Commercial fraud (cheating pricing - Products corrupt - the smuggling of subsidized flour)",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "119",
+          "parent_id": "118",
+          "title": "حوادث طرق",
+          "description": "Road accidents",
+          "color": "ed1c23",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 161,
+            "category_title": "حوادث طرق",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 162,
+            "category_title": "Road accidents",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "102",
+          "parent_id": "101",
+          "title": "الاحتيال والنصب",
+          "description": "محاولات الغش والخداعوالنصب",
+          "color": "00ff00",
+          "position": "1",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 127,
+            "category_title": "الاحتيال والنصب",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 128,
+            "category_title": "Fraud",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "104",
+          "parent_id": "101",
+          "title": "سرقه ممتلكات الخاصة  - العامه",
+          "description": "سرقه ممتلكات الخاصة  - العامه",
+          "color": "ff7d27",
+          "position": "3",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 131,
+            "category_title": "سرقه ممتلكات الخاصة  - العامه",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 132,
+            "category_title": "Theft of private property - General",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "31",
+          "parent_id": "118",
+          "title": "مخالفات مرورية",
+          "description": "Traffic Violation",
+          "color": "a249a4",
+          "position": "18",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 55,
+            "category_title": "Traffic Violation",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 56,
+            "category_title": "مخالفات مرورية",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "111",
+          "parent_id": "0",
+          "title": "مفقودات",
+          "description": "Missing",
+          "color": "fff200",
+          "position": "0",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 145,
+            "category_title": "مفقودات",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 146,
+            "category_title": "Missing",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "34",
+          "parent_id": "0",
+          "title": "معثورات",
+          "description": "Founds",
+          "color": "22b14d",
+          "position": "31",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 62,
+            "category_title": "Founds",
+            "category_description": null
+          },
+          "fr_FR": {
+            "id": 63,
+            "category_title": "",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 64,
+            "category_title": "معثورات",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "35",
+          "parent_id": "34",
+          "title": "سيارات",
+          "description": "Cars",
+          "color": "ed1c23",
+          "position": "32",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 65,
+            "category_title": "Cars",
+            "category_description": null
+          },
+          "fr_FR": {
+            "id": 66,
+            "category_title": "Cars",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 67,
+            "category_title": "سيارات",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "36",
+          "parent_id": "34",
+          "title": "معثورات اخرى",
+          "description": "Other Founds",
+          "color": "3f49cc",
+          "position": "33",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 68,
+            "category_title": "Other Founds",
+            "category_description": null
+          },
+          "fr_FR": {
+            "id": 69,
+            "category_title": "Mobiles",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 70,
+            "category_title": "معثورات اخرى",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "26",
+          "parent_id": "111",
+          "title": "اشخاص مفقودين",
+          "description": "Missing Persons",
+          "color": "ed1c23",
+          "position": "34",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 45,
+            "category_title": "Missing Persons",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 46,
+            "category_title": "اشخاص مفقودين",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "22",
+          "parent_id": "101",
+          "title": "سرقه سيارة-  دراجة بخارية",
+          "description": "Car theft",
+          "color": "a249a4",
+          "position": "41",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 37,
+            "category_title": "Car theft",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 38,
+            "category_title": "سرقه سيارة-  دراجة بخارية",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "32",
+          "parent_id": "0",
+          "title": "مخالفات بناء",
+          "description": "Violation of Building",
+          "color": "a249a4",
+          "position": "42",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 57,
+            "category_title": "Violation of Building",
+            "category_description": null
+          },
+          "ar_EG": {
+            "id": 58,
+            "category_title": "مخالفات بناء",
+            "category_description": null
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "43",
+          "parent_id": "32",
+          "title": "Encroached upon the state lands",
+          "description": "Using the public land in any private use.",
+          "color": "32ad4b",
+          "position": "43",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 83,
+            "category_title": "Encroached upon the state lands",
+            "category_description": "Using the public land in any private use."
+          },
+          "ar_EG": {
+            "id": 84,
+            "category_title": "تعدى على اراضى الدوله",
+            "category_description": null
+          },
+          "ar": {
+            "id": 163,
+            "category_title": "بناء على اراضي الدوله",
+            "category_description": "بناء على اراضي الدوله"
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "39",
+          "parent_id": "32",
+          "title": "Building Modification Without Permit",
+          "description": "Building Modification Without Permit",
+          "color": "361cff",
+          "position": "44",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 75,
+            "category_title": "Building Modification Without Permit",
+            "category_description": "Building Modification Without Permit"
+          },
+          "ar_EG": {
+            "id": 76,
+            "category_title": "تعديل مبنى بدون ترخيص",
+            "category_description": null
+          },
+          "ar": {
+            "id": 166,
+            "category_title": "تعديل بناء بدون تصريح",
+            "category_description": "تعديل بناء بدون تصريح"
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "37",
+          "parent_id": "32",
+          "title": "Building on Agricultural Land",
+          "description": "Building on Agricultural Land",
+          "color": "fc1414",
+          "position": "45",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 71,
+            "category_title": "Building on Agricultural Land",
+            "category_description": "Building on Agricultural Land"
+          },
+          "ar_EG": {
+            "id": 72,
+            "category_title": "بناء على اراضى زراعية",
+            "category_description": null
+          },
+          "ar": {
+            "id": 164,
+            "category_title": "بناء على ارض زراعية",
+            "category_description": "بناء على ارض زراعية"
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "38",
+          "parent_id": "32",
+          "title": "New Building Without Permit",
+          "description": "New Building Without Permit",
+          "color": "fabc20",
+          "position": "46",
+          "icon": ""
+        },
+        "translations": {
+          "en_US": {
+            "id": 73,
+            "category_title": "New Building Without Permit",
+            "category_description": "New Building Without Permit"
+          },
+          "ar_EG": {
+            "id": 74,
+            "category_title": "بناء جديد بدون ترخيص",
+            "category_description": null
+          },
+          "ar": {
+            "id": 165,
+            "category_title": "بناء بدون ترخيص",
+            "category_description": "بناء بدون ترخيص"
+          }
+        }
+      },
+      {
+        "category": {
+          "id": "108",
+          "parent_id": "0",
+          "title": "عنف - تجاره ممنوعات",
+          "description": "عنف - تجاره ممنوعات",
+          "color": "ff8127",
+          "position": "56",
+          "icon": ""
+        },
+        "translations": {
+          "ar_EG": {
+            "id": 139,
+            "category_title": "عنف - تجاره ممنوعات",
+            "category_description": null
+          },
+          "en_US": {
+            "id": 140,
+            "category_title": "Violence - Trade prohibitions",
+            "category_description": null
+          }
+        }
+      }
+    ]
+  },
+  "error": {
+    "code": "0",
+    "message": "لايوجد خطأ"
+  }
+}

@@ -28,18 +28,20 @@
     color: #777;
   }
 
-  .legend {
+  .legend, .categories {
     text-align: left;
     line-height: 18px;
     color: #555;
   }
-  .legend i {
+  .legend i , .categories i{
     width: 18px;
     height: 18px;
     float: left;
     margin-right: 8px;
     opacity: 0.7;
   }
+
+
   </style>
 </head>
 <body>
@@ -48,16 +50,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="leaflet-src.js"></script>
   <script src="leaflet-pip.js"></script>
+  <script src="jsGradient.js"></script>
 
 
   <script>
-  var map = L.map('map').setView([30.047732, 30.234897], 8);
+  var map = L.map('map', {zoomControl: false}).setView([28.285033294640684, 30.30029296875], 7);
+
 
   L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
     '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    'Imagery © <a href="http://mapbox.com">Mapbox</a>, '+
+    'Data © <a href="http://zabatak.com">Zabatak</a> ',
     id: 'examples.map-20v6611k'
   }).addTo(map);
 
@@ -79,42 +84,54 @@
     async:false
   }).responseJSON;
 
+  //http://zabatak.com/api?task=categories
+  categories = $.ajax({
+    url:"http://local:8000/uji.egypt/categories.json",
+    dataType:"json",
+    async:false
+  }).responseJSON.payload.categories;
+
 
 
   function popup(feature, layer) {
     layer.bindPopup(feature.properties.name + " " +feature.properties.incidents);
-    console.log(feature.properties);
   }
 
   // get color depending on population density value
+  //var colors = jsgradient.generateGradient('#07E3F2', '#155994', 8);
+  var colors = jsgradient.generateGradient('#ffffff', '#000000', 8);
+  console.log(colors);
+
   function getColor(d) {
-    //console.log(d);
-    if(d.incidents){
-      d = d.incidents.length
-    }
-    //console.log(d);
-    return d > 740 ? '#800026' :
-    d > 320  ? '#BD0026' :
-    d > 160  ? '#E31A1C' :
-    d > 80  ? '#FC4E2A' :
-    d > 40   ? '#FD8D3C' :
-    d > 20   ? '#FEB24C' :
-    d > 10   ? '#FED976' :
-    '#FFEDA0';
+
+    // return d > 740 ? '#800026' :
+    // d > 320  ? '#BD0026' :
+    // d > 160  ? '#E31A1C' :
+    // d > 80  ? '#FC4E2A' :
+    // d > 40   ? '#FD8D3C' :
+    // d > 20   ? '#FEB24C' :
+    // d > 10   ? '#FED976' :
+    // '#FFEDA0';
+
+    return d > 740 ? colors[7] :
+    d > 320  ? colors[6] :
+    d > 160  ? colors[5] :
+    d > 80  ? colors[4] :
+    d > 40   ? colors[3] :
+    d > 20   ? colors[2] :
+    d > 10   ? colors[1] :
+    colors[0];
   }
 
-  function style(feature) {
-    return {
-      weight: 2,
-      opacity: 1,
-      color: 'white',
-      dashArray: '3',
-      fillOpacity: 0.7,
-      fillColor: getColor(feature.properties.incidents.length)
-    };
+  function fillColor(feature){
+      if(feature.properties.incidents){
+        return getColor(feature.properties.incidents.length);
+      }
+
+      return getColor(0);
   }
 
-  function style2(feature){
+  function style(feature){
     // if(feature.properties.incidents){
     //   console.log(1-(feature.properties.incidents.length *10/incidents.length).toFixed(2));
     // }
@@ -125,33 +142,21 @@
         color: 'white',
         dashArray: '3',
         fillOpacity: 0.7,
-        fillColor: getColor(feature.properties)
-        // function(){
-        //   if(feature.properties.incidents){
-        //     return 1-(feature.properties.incidents.length *10/incidents.length).toFixed(2);
-        //   }
-        //
-        //   return 0.9;
-        // }
+        fillColor: fillColor(feature)
       }
   }
 
-  cairoLayer = L.geoJson(cairo);//.addTo(map);
+  //cairoLayer = L.geoJson(cairo);
   egyptLayer = L.geoJson(egypt,
     {
-      style: style2,
+      style: style
     }
-  );//.addTo(map);
+  );
 
-
-
-  incidents.length
   jQuery.each(incidents, function(key, val){
-    //console.log(val);
     var latLng = new  L.latLng( val.incident.locationlatitude , val.incident.locationlongitude);
 
     var results = leafletPip.pointInLayer(latLng, egyptLayer, true);
-
     jQuery.each(results,function(key, layer){
       if(layer.feature.properties.incidents){
         layer.feature.properties.incidents.push(val);
@@ -161,7 +166,7 @@
       }
 
     });
-    //if(key > 500) return false;
+    if(key > 100) return false;
   });
 
 
@@ -178,9 +183,57 @@
   });
 
   egyptLayer.addTo(map);
+
+  /**** CONTROLS ****/
+
+
+
+  /* categories */
+
+  var categoryControl = L.control({position: 'topright'});
+  categoryControl.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info categories');
+    list = [];
+    jQuery.each(categories, function(index, item){
+      //use parent categories only
+      if(item.category.parent_id != 0) return;
+      list.push(
+        '<i style="background:#' + item.category.color + '"></i> ' +
+        item.translations.en_US.category_title
+      );
+    });
+    div.innerHTML = "<b>Categories</b><hr/>";
+    div.innerHTML += list.join('<br>');
+    console.log(div);
+    return div;
+  } //end onAdd
+
+  categoryControl.addTo(map);
+
+    /* Title */
+
+    var titleControl = L.control({position: 'topleft'});
+    titleControl.onAdd = function (map) {
+      var div = L.DomUtil.create('div', 'info title')
+      div.innerHTML = '<h1>Choropleth Map of Crimes in Egypt</h1>';
+      div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.length  + '</b> incidents</p>';
+      return div;
+    } //end onAdd
+
+    titleControl.addTo(map);
+
+    L.control.zoom({
+      position:'topleft'
+    }).addTo(map);
+
+
+
+
+  /**
+   Legend
+  */
   var legend = L.control({position: 'bottomright'});
   legend.onAdd = function (map) {
-
     var div = L.DomUtil.create('div', 'info legend'),
     grades = [10, 20, 40, 80, 160, 320, 740],
     labels = [],
@@ -195,11 +248,17 @@
         from + (to ? '&ndash;' + to : '+'));
       }
 
-      div.innerHTML = labels.join('<br>');
+      div.innerHTML = "<b>Legend</b><hr/>";
+      div.innerHTML += labels.join('<br>');
       return div;
     };
 
     legend.addTo(map);
+
+
+    egyptLayer.on('click', function(e){
+      console.log(e);
+    });
 
 </script>
 </body>
