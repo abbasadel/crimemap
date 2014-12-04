@@ -153,7 +153,20 @@
     }
   );
 
+  var catIncidents = [];
   jQuery.each(incidents, function(key, val){
+
+    jQuery.each(val.categories, function(index, cat){
+      if(typeof catIncidents[cat.category.id] == 'undefined'){
+        catIncidents[cat.category.id] = 0;
+      }else{
+        catIncidents[cat.category.id]++;
+      }
+      //console.log("catIncidents[" + cat.category.id +"]" + catIncidents[cat.category.id])
+    });
+
+    //
+
     var latLng = new  L.latLng( val.incident.locationlatitude , val.incident.locationlongitude);
 
     var results = leafletPip.pointInLayer(latLng, egyptLayer, true);
@@ -166,8 +179,25 @@
       }
 
     });
-    if(key > 100) return false;
+    //if(key > 100) return false;
   });
+
+  console.log(catIncidents);
+
+  //store child incident counts in parent ids
+  jQuery.each(categories, function(key, item){
+    if(catIncidents[item.category.id] == 'undefined') return;
+
+    if(typeof catIncidents[item.category.parent_id] == 'undefined'){
+      catIncidents[item.category.parent_id] = 0;
+    }
+
+    if(item.category.parent_id != 0){
+      catIncidents[item.category.parent_id] +=catIncidents[item.category.id];
+    }
+  });
+
+  console.log(catIncidents);
 
 
   $.each(egyptLayer.getLayers(), function(k,layer){
@@ -198,8 +228,8 @@
       //use parent categories only
       if(item.category.parent_id != 0) return;
       list.push(
-        '<i style="background:#' + item.category.color + '"></i> ' +
-        item.translations.en_US.category_title
+        '<i id="cat' + item.category.id +'" style="background:#' + item.category.color + '"></i> ' +
+        item.translations.en_US.category_title + ' (' + catIncidents[item.category.id] + ')'
       );
     });
     div.innerHTML = "<b>Categories</b><hr/>";
