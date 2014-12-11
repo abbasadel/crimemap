@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="leaflet.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
   <style>
 
   body {
@@ -41,6 +42,10 @@
     opacity: 0.7;
   }
 
+  #leaflet-slider{
+    width: 600px !important;
+    margin: 20px;
+  }
 
   </style>
 </head>
@@ -51,6 +56,9 @@
   <script src="leaflet-src.js"></script>
   <script src="leaflet-pip.js"></script>
   <script src="jsGradient.js"></script>
+  <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+  <script src="./leaflet.SliderControl.min.js"></script>
 
 
   <script>
@@ -284,6 +292,17 @@
     };
 
     legend.addTo(map);
+
+    var sliderControl = L.control.sliderControl({
+      position: "bottomleft",
+      layer: egyptLayer,
+      range: true
+    });
+
+    //Make sure to add the slider to the map ;-)
+    map.addControl(sliderControl);
+    //An initialize the slider
+    sliderControl.startSlider();
 
 
     egyptLayer.on('click', function(e){
