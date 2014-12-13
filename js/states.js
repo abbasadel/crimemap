@@ -20,7 +20,7 @@ var states = new function(){
       dataType:"json",
       async:false
     }).responseJSON;
-    console.log( this.url + ' loaded ' + statesInfo.length);
+    //console.log( this.url + ' loaded ' + statesInfo.length);
     return statesInfo;
   }
 
@@ -39,26 +39,26 @@ var states = new function(){
   }
 
   this.init = function(){
-    console.log('calling init');
+    //console.log('calling init');
     rawData = this.loadData();
     this.data = this.processData(rawData);
     this.calcTotalArea();
     this.calcTotalPopulation();
-    console.log('finish init');
+    //console.log('finish init');
   }
 
   this.findByName = function(name){
     var found = null;
     jQuery.each(this.data, function(index, item){
       if(name == item.name){
-        console.log('found ' + name + ' => ' + item);
+        //console.log('found ' + name + ' => ' + item);
         found = item;
         return null; //stop loop
       }
 
     });
     if(found == null){
-      console.log('cant find ' + name);
+      //console.log('cant find ' + name);
     }
 
     return found;
@@ -72,7 +72,7 @@ var states = new function(){
     });
 
     this.totalArea = total;
-    console.log('totalArea = ' + this.totalArea);
+    //console.log('totalArea = ' + this.totalArea);
 
     return this.totalArea;
   }
@@ -85,7 +85,7 @@ var states = new function(){
     });
 
     this.totalPopulation = total;
-    console.log('totalPopulation = ' + this.totalPopulation);
+    //console.log('totalPopulation = ' + this.totalPopulation);
 
     return this.totalPopulation;
   }

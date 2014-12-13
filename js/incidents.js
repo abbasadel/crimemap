@@ -16,13 +16,13 @@ var incidents = new function() {
   // functions
 
   this.loadData = function() {
-    console.log(this.url + ' loading ');
+    // console.log(this.url + ' loading ');
     json = $.ajax({
       url: this.url,
       dataType: "json",
       async: false
     }).responseJSON.payload.incidents;
-    console.log(this.url + ' loaded ' + json.length);
+    // console.log(this.url + ' loaded ' + json.length);
     return json;
   }
 
@@ -43,7 +43,7 @@ var incidents = new function() {
     });
 
 
-    console.log(list);
+    // console.log(list);
     return list;
   }
 

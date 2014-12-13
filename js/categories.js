@@ -41,13 +41,13 @@ var categories = new function() {
   // functions
 
   this.loadData = function() {
-    console.log(this.url + ' loading ');
+    //console.log(this.url + ' loading ');
     json = $.ajax({
       url: this.url,
       dataType: "json",
       async: false
     }).responseJSON.payload.categories;
-    console.log(this.url + ' loaded ' + json.length);
+  //  console.log(this.url + ' loaded ' + json.length);
     return json;
   }
 
@@ -87,10 +87,10 @@ var categories = new function() {
   }
 
   this.init = function() {
-    console.log('calling init');
+    // console.log('calling init');
     rawData = this.loadData();
     this.data = this.processData(rawData);
-    console.log('finish init');
+    // console.log('finish init');
   }
 
 

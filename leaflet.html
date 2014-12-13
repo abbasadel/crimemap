@@ -24,6 +24,7 @@
       background: rgba(255, 255, 255, 0.8);
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
       border-radius: 5px;
+      width: 260px;
     }
     .info h4 {
       margin: 0 0 5px;
@@ -46,6 +47,10 @@
     #leaflet-slider {
       width: 600px !important;
       margin: 20px;
+    }
+
+    .title{
+      width: 470px;
     }
   </style>
 </head>
@@ -71,6 +76,7 @@
 
 
   <script>
+    var colorOption = 'INC'; //AREA, POP
     var map = L.map('map', {
       zoomControl: false
     }).setView([28.285033294640684, 30.30029296875], 7);
@@ -120,28 +126,40 @@
         colors[0];
     }
 
-    function fillColor(feature) {
+    function getPercentageValue(feature) {
+      var colorValue = 0;
       if (feature.properties.incidents) {
-        return getColor((feature.properties.incidents.length * 100 / incidents.total).toFixed(2));
-      }
 
-      return getColor(0);
+        var percent = feature.properties.incidents.length * 100 / incidents.total;
+        var state = states.findByName(feature.properties.name);
+
+        if (colorOption == 'POP') {
+          colorValue = feature.properties.incidents.length * 1000 / state.population;
+        } else if (colorOption == 'AREA') {
+          colorValue = feature.properties.incidents.length * 1000 / state.area;
+        } else {
+          colorValue = percent;
+        }
+        console.log(state.name + ' ' + colorValue);
+      }
+      return colorValue;
+    }
+
+    function fillColor(feature) {
+      return getColor(getPercentageValue(feature).toFixed(2));
     }
 
     function style(feature) {
-      // if(feature.properties.incidents){
-      //   console.log(1-(feature.properties.incidents.length *10/incidents.length).toFixed(2));
-      // }
-      //console.log(feature.properties.incidents.length *100/incidents.length)
       return {
         weight: 2,
         opacity: 1,
-        color: 'white',
+        color: 'black',
         dashArray: '3',
         fillOpacity: 0.7,
         fillColor: fillColor(feature)
       }
     }
+
 
     //cairoLayer = L.geoJson(cairo);
     egyptLayer = L.geoJson(egypt, {
@@ -166,28 +184,32 @@
     });
 
 
-
-
-    jQuery.each(egyptLayer.getLayers(), function(k, layer) {
-      feature = layer.feature;
-      count = 0;
-
-      if (feature.properties.incidents) {
-        count = feature.properties.incidents.length;
-      }
-      var state = states.findByName(feature.properties.name);
-      var contents = ['<b>', feature.properties.name, '</b><br />',
-        'Incidents: ' , count, ' (%' , (count * 100 / incidents.total).toFixed(2)  , '%)', '<br />',
-        'Population: ' , state.population.format(), ' (' , (state.population * 100 / states.totalPopulation).toFixed(2)  , '%)','<br />',
-        'Area: ' , state.area.format(), ' km<sup>2</sup>',' (' , (state.area * 100 / states.totalArea).toFixed(2)  , '%)', '<br />'
-      ].join('');
-      //feature.properties.name + " " + count * 100 / incidents.total
-      layer.bindPopup(contents);
-      egyptLayer.resetStyle(layer);
-
-    });
-
     egyptLayer.addTo(map);
+
+
+    function resetLayers() {
+      jQuery.each(egyptLayer.getLayers(), function(k, layer) {
+        feature = layer.feature;
+        count = 0;
+
+        if (feature.properties.incidents) {
+          count = feature.properties.incidents.length;
+        }
+        var state = states.findByName(feature.properties.name);
+        var contents = ['<b>', feature.properties.name, ' (', getPercentageValue(feature).toFixed(2), '%)', '</b>', '<br />',
+        'Incidents: ', count, ' (', (count * 100 / incidents.total).toFixed(2), '%)', '<br />',
+        'Population: ', state.population.format(), ' (', (state.population * 100 / states.totalPopulation).toFixed(2), '%)', '<br />',
+        'Area: ', state.area.format(), ' km<sup>2</sup>', ' (', (state.area * 100 / states.totalArea).toFixed(2), '%)', '<br />'
+        ].join('');
+        //feature.properties.name + " " + count * 100 / incidents.total
+        layer.bindPopup(contents);
+
+
+        egyptLayer.resetStyle(layer);
+      });
+    }
+
+    resetLayers();
 
     /**** CONTROLS ****/
 
@@ -195,24 +217,48 @@
 
     /* categories */
 
-    var categoryControl = L.control({position: 'topright'});
-    categoryControl.onAdd = function (map) {
-      var div = L.DomUtil.create('div', 'info categories');
-      list = [];
-      jQuery.each(categories.all(), function(index, item){
-        //use parent categories only
-        list.push(
-          '<i id="cat' + item.id +'" style="background:#' + item.color + '"></i> ' +
-          item.name + ' (' + item.allIncidents().length + ')'
-        );
-      });
-      div.innerHTML = "<b>Categories</b><hr/>";
-      div.innerHTML += list.join('<br>');
-      //console.log(div);
-      return div;
-    } //end onAdd
+    var categoryControl = L.control({
+      position: 'topright'
+    });
+    categoryControl.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'info categories');
+        list = [];
+        jQuery.each(categories.all(), function(index, item) {
+          //use parent categories only
+          list.push(
+            '<i id="cat' + item.id + '" style="background:#' + item.color + '"></i> ' +
+            item.name + ' (' + item.allIncidents().length + ')'
+          );
+        });
+        div.innerHTML = "<b>Categories</b><hr/>";
+        div.innerHTML += list.join('<br>');
+        //console.log(div);
+        return div;
+      } //end onAdd
 
     categoryControl.addTo(map);
+
+
+    /* options */
+    var optionsControl = L.control({
+      position: 'topright'
+    });
+
+    optionsControl.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'info options');
+        var content = [
+          '<input type="radio" name="type" value="INC" checked>Incidents Percentage</input>',
+          '<input type="radio" name="type" value="POP">Incidents Percentage per Population</input>',
+          '<input type="radio" name="type" value="AREA">Incidents Percentage per Area</input>',
+        ]
+
+        div.innerHTML = "<b>Color Map By:</b><hr/>";
+        div.innerHTML += content.join('<br>');
+        //console.log(div);
+        return div;
+      } //end onAdd
+
+    optionsControl.addTo(map);
 
     /* Title */
 
@@ -222,7 +268,7 @@
     titleControl.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'info title')
         div.innerHTML = '<h1>Choropleth Map of Crimes in Egypt</h1>';
-        div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.length + '</b> incidents</p>';
+        div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.total + '</b> incidents</p>';
         return div;
       } //end onAdd
 
@@ -277,6 +323,11 @@
 
     egyptLayer.on('click', function(e) {
       //console.log(e);
+    });
+
+    $('.options input').change(function() {
+      colorOption = $('.options input:checked').val();
+      resetLayers();
     });
   </script>
 </body>
