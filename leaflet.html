@@ -4,7 +4,7 @@
   <title>Egypt Crime Map</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="leaflet.css" />
+  <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
   <style>
 
@@ -53,51 +53,66 @@
   <div id="map" style="width:100%"></div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="leaflet-src.js"></script>
-  <script src="leaflet-pip.js"></script>
-  <script src="jsGradient.js"></script>
   <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
-  <script src="./leaflet.SliderControl.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+
+  <script src="js/leaflet-src.js"></script>
+  <script src="js/leaflet-pip.js"></script>
+  <script src="js/jsGradient.js"></script>
+  <!-- script src="js/leaflet.SliderControl.min.js"></script -->
+
+  <script src="js/states.js"></script>
 
 
   <script>
+
+
+
   var map = L.map('map', {zoomControl: false}).setView([28.285033294640684, 30.30029296875], 7);
 
 
-  L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>, '+
-    'Data © <a href="http://zabatak.com">Zabatak</a> ',
-    id: 'examples.map-20v6611k'
+  L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    minZoom: 0,
+    maxZoom: 18
   }).addTo(map);
 
+
+
+  cairo = $.ajax({
+    url:"geojson/cairo.geojson",
+    dataType:"json",
+    async:false
+  }).responseJSON;
+  console.log('geojson/cairo.geojson loaded');
+
+  egypt = $.ajax({
+    url:"geojson/egypt-mploygon.geojson",
+    dataType:"json",
+    async:false
+  }).responseJSON;
+  console.log('geojson/egypt-mploygon.geojson loaded');
+
   incidents = $.ajax({
-    url:"http://local:8000/uji.egypt/incidents.json",
+    url:"json/incidents.json",
     dataType:"json",
     async:false
   }).responseJSON.payload.incidents;
-
-  cairo = $.ajax({
-    url:"http://local:8000/uji.egypt/cairo.geojson",
-    dataType:"json",
-    async:false
-  }).responseJSON;
-
-  egypt = $.ajax({
-    url:"http://local:8000/uji.egypt/egypt-mploygon.geojson",
-    dataType:"json",
-    async:false
-  }).responseJSON;
+  console.log('json/incidents.json loaded ' + incidents.length);
 
   //http://zabatak.com/api?task=categories
   categories = $.ajax({
-    url:"http://local:8000/uji.egypt/categories.json",
+    url:"json/categories.json",
     dataType:"json",
     async:false
   }).responseJSON.payload.categories;
+  console.log('json/categories.json loaded ' + categories.length);
+
+
+
+
+
 
 
 
@@ -107,7 +122,7 @@
 
   // get color depending on population density value
   //var colors = jsgradient.generateGradient('#07E3F2', '#155994', 8);
-  var colors = jsgradient.generateGradient('#ffffff', '#000000', 8);
+  var colors = jsgradient.generateGradient('#eeeeee', '#000000', 9);
   console.log(colors);
 
   function getColor(d) {
@@ -120,20 +135,21 @@
     // d > 20   ? '#FEB24C' :
     // d > 10   ? '#FED976' :
     // '#FFEDA0';
-
-    return d > 740 ? colors[7] :
-    d > 320  ? colors[6] :
-    d > 160  ? colors[5] :
-    d > 80  ? colors[4] :
-    d > 40   ? colors[3] :
-    d > 20   ? colors[2] :
-    d > 10   ? colors[1] :
+    console.log(d);
+    return d > 20  ? colors[8] :
+    d > 10  ? colors[7] :
+    d > 5  ? colors[6] :
+    d > 1  ? colors[5] :
+    d > 0.5  ? colors[4] :
+    d > 0.2   ? colors[3] :
+    d > 0.1   ? colors[2] :
+    d > 0   ? colors[1] :
     colors[0];
   }
 
   function fillColor(feature){
       if(feature.properties.incidents){
-        return getColor(feature.properties.incidents.length);
+        return getColor( (feature.properties.incidents.length*100/incidents.length).toFixed(2));
       }
 
       return getColor(0);
@@ -155,11 +171,8 @@
   }
 
   //cairoLayer = L.geoJson(cairo);
-  egyptLayer = L.geoJson(egypt,
-    {
-      style: style
-    }
-  );
+  egyptLayer = L.geoJson(egypt,{style: style});
+  console.log(egyptLayer.getLayers());
 
   var catIncidents = [];
   jQuery.each(incidents, function(key, val){
@@ -170,8 +183,9 @@
       }else{
         catIncidents[cat.category.id]++;
       }
-      //console.log("catIncidents[" + cat.category.id +"]" + catIncidents[cat.category.id])
     });
+
+
 
     //
 
@@ -190,7 +204,7 @@
     //if(key > 100) return false;
   });
 
-  console.log(catIncidents);
+
 
   //store child incident counts in parent ids
   jQuery.each(categories, function(key, item){
@@ -205,17 +219,18 @@
     }
   });
 
+  console.log('Number of Incidents per category:');
   console.log(catIncidents);
 
 
   $.each(egyptLayer.getLayers(), function(k,layer){
     feature = layer.feature;
     count = 0;
+
     if(feature.properties.incidents){
       count = feature.properties.incidents.length;
     }
-    layer.bindPopup(feature.properties.name + " " +count);
-
+    layer.bindPopup(feature.properties.name + " " +count*100/incidents.length);
     egyptLayer.resetStyle(layer);
 
   });
@@ -242,7 +257,7 @@
     });
     div.innerHTML = "<b>Categories</b><hr/>";
     div.innerHTML += list.join('<br>');
-    console.log(div);
+    //console.log(div);
     return div;
   } //end onAdd
 
@@ -273,7 +288,7 @@
   var legend = L.control({position: 'bottomright'});
   legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend'),
-    grades = [10, 20, 40, 80, 160, 320, 740],
+    grades = [0, 0.1, 0.2, 0.5, 1, 5, 10, 20],
     labels = [],
     from, to;
 
@@ -282,7 +297,7 @@
       to = grades[i + 1];
 
       labels.push(
-        '<i style="background:' + getColor(from + 1) + '"></i> ' +
+        '<i style="background:' + getColor(from) + '"></i> ' +
         from + (to ? '&ndash;' + to : '+'));
       }
 
@@ -293,16 +308,16 @@
 
     legend.addTo(map);
 
-    var sliderControl = L.control.sliderControl({
-      position: "bottomleft",
-      layer: egyptLayer,
-      range: true
-    });
-
-    //Make sure to add the slider to the map ;-)
-    map.addControl(sliderControl);
-    //An initialize the slider
-    sliderControl.startSlider();
+    // var sliderControl = L.control.sliderControl({
+    //   position: "bottomleft",
+    //   layer: egyptLayer,
+    //   range: true
+    // });
+    //
+    // //Make sure to add the slider to the map ;-)
+    // map.addControl(sliderControl);
+    // //An initialize the slider
+    // sliderControl.startSlider();
 
 
     egyptLayer.on('click', function(e){
