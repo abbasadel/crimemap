@@ -7,6 +7,18 @@ function Category(id, name, color, parentId) {
   this.parent = null;
   this.childs = [];
   this.incidents = [];
+
+  this.allIncidents = function(){
+    all = [];
+    jQuery.merge(all, this.incidents);
+
+
+    jQuery.each(this.childs, function(index, item){
+      jQuery.merge(all, item.incidents);
+    });
+
+    return all;
+  }
 }
 
 var categories = new function() {
@@ -80,6 +92,8 @@ var categories = new function() {
     this.data = this.processData(rawData);
     console.log('finish init');
   }
+
+
 
   /// let's go
 

@@ -102,10 +102,6 @@
 
 
 
-    function popup(feature, layer) {
-      layer.bindPopup(feature.properties.name + " " + feature.properties.incidents);
-    }
-
     // get color depending on population density value
     //var colors = jsgradient.generateGradient('#07E3F2', '#155994', 8);
     var colors = jsgradient.generateGradient('#eeeeee', '#000000', 9);
@@ -179,8 +175,14 @@
       if (feature.properties.incidents) {
         count = feature.properties.incidents.length;
       }
-
-      layer.bindPopup(feature.properties.name + " " + count * 100 / incidents.total);
+      var state = states.findByName(feature.properties.name);
+      var contents = ['<b>', feature.properties.name, '</b><br />',
+        'Incidents: ' , count, ' (%' , (count * 100 / incidents.total).toFixed(2)  , '%)', '<br />',
+        'Population: ' , state.population.format(), ' (' , (state.population * 100 / states.totalPopulation).toFixed(2)  , '%)','<br />',
+        'Area: ' , state.area.format(), ' km<sup>2</sup>',' (' , (state.area * 100 / states.totalArea).toFixed(2)  , '%)', '<br />'
+      ].join('');
+      //feature.properties.name + " " + count * 100 / incidents.total
+      layer.bindPopup(contents);
       egyptLayer.resetStyle(layer);
 
     });
@@ -193,25 +195,24 @@
 
     /* categories */
 
-    // var categoryControl = L.control({position: 'topright'});
-    // categoryControl.onAdd = function (map) {
-    //   var div = L.DomUtil.create('div', 'info categories');
-    //   list = [];
-    //   jQuery.each(categories, function(index, item){
-    //     //use parent categories only
-    //     if(item.category.parent_id != 0) return;
-    //     list.push(
-    //       '<i id="cat' + item.category.id +'" style="background:#' + item.category.color + '"></i> ' +
-    //       item.translations.en_US.category_title + ' (' + catIncidents[item.category.id] + ')'
-    //     );
-    //   });
-    //   div.innerHTML = "<b>Categories</b><hr/>";
-    //   div.innerHTML += list.join('<br>');
-    //   //console.log(div);
-    //   return div;
-    // } //end onAdd
-    //
-    // categoryControl.addTo(map);
+    var categoryControl = L.control({position: 'topright'});
+    categoryControl.onAdd = function (map) {
+      var div = L.DomUtil.create('div', 'info categories');
+      list = [];
+      jQuery.each(categories.all(), function(index, item){
+        //use parent categories only
+        list.push(
+          '<i id="cat' + item.id +'" style="background:#' + item.color + '"></i> ' +
+          item.name + ' (' + item.allIncidents().length + ')'
+        );
+      });
+      div.innerHTML = "<b>Categories</b><hr/>";
+      div.innerHTML += list.join('<br>');
+      //console.log(div);
+      return div;
+    } //end onAdd
+
+    categoryControl.addTo(map);
 
     /* Title */
 
