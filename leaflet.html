@@ -278,6 +278,26 @@
 
     optionsControl.addTo(map);
 
+
+    /* slider options */
+    var sliderOptionsControl = L.control({
+      position: 'topright'
+    });
+
+    sliderOptionsControl.onAdd = function(map) {
+      var div = L.DomUtil.create('div', 'info slider-options');
+      var content = [
+      '<input id="incidentSlider" type="checkbox" name="slider" value="true" checked>Show Incident Slider</input>'
+      ]
+
+      div.innerHTML = "<b>Map Options:</b><hr/>";
+      div.innerHTML += content.join('<br>');
+      //console.log(div);
+      return div;
+    } //end onAdd
+
+    sliderOptionsControl.addTo(map);
+
     /* Title */
 
     var titleControl = L.control({
@@ -287,6 +307,7 @@
         var div = L.DomUtil.create('div', 'info title')
         div.innerHTML = '<h1>Choropleth Map of Crimes in Egypt</h1>';
         div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.total + '</b> incidents</p>';
+        div.innerHTML += '<p><b>Total Population:</b> ' + states.totalPopulation.format()  + ' <b>Total Area:</b> ' + states.totalArea.format() +  'km<sup>2</sup></p>';
         return div;
       } //end onAdd
 
@@ -346,6 +367,18 @@
     $('.options input').change(function() {
       colorOption = $('.options input:checked').val();
       resetLayers();
+    });
+
+
+    $('#incidentSlider').change(function() {
+      if(this.checked) {
+        map.addLayer(markersLayer);
+        map.addControl(sliderControl);
+        sliderControl.startSlider();
+      }else{
+        map.removeLayer(markersLayer);
+        map.removeControl(sliderControl);
+      }
     });
   </script>
 </body>
