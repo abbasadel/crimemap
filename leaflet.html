@@ -52,6 +52,13 @@
     .title{
       width: 470px;
     }
+
+  #slider-timestamp{
+    width: 100%;
+    margin-top: 10px;
+    background-color: none;
+    text-align: center;
+  }
   </style>
 </head>
 
@@ -65,7 +72,7 @@
   <script src="js/leaflet-src.js"></script>
   <script src="js/leaflet-pip.js"></script>
   <script src="js/jsGradient.js"></script>
-  <!-- script src="js/leaflet.SliderControl.min.js"></script -->
+  <script src="js/leaflet.SliderControl.min.js"></script>
 
   <script src="js/utils.js"></script>
   <script src="js/states.js"></script>
@@ -77,6 +84,7 @@
 
   <script>
     var colorOption = 'INC'; //AREA, POP
+    var markers = [];
     var map = L.map('map', {
       zoomControl: false
     }).setView([28.285033294640684, 30.30029296875], 7);
@@ -166,6 +174,7 @@
       style: style
     });
 
+
     jQuery.each(incidents.all(), function(key, incident) {
 
       var latLng = new L.latLng(incident.lat, incident.lng);
@@ -180,11 +189,20 @@
         }
 
       });
+
+
+      //make marker
+
+      markers.push(
+        L.circleMarker(latLng, {time: incident.time, color: '#ff0000'}).bindPopup(incident.time)
+      )
       //if(key > 100) return false; //limit
     });
 
 
     egyptLayer.addTo(map);
+    var markersLayer = L.layerGroup(markers.reverse());
+    markersLayer.addTo(map);
 
 
     function resetLayers() {
@@ -309,16 +327,16 @@
 
     legend.addTo(map);
 
-    // var sliderControl = L.control.sliderControl({
-    //   position: "bottomleft",
-    //   layer: egyptLayer,
-    //   range: true
-    // });
-    //
-    // //Make sure to add the slider to the map ;-)
-    // map.addControl(sliderControl);
-    // //An initialize the slider
-    // sliderControl.startSlider();
+    var sliderControl = L.control.sliderControl({
+      position: "bottomleft",
+      layer: markersLayer,
+      range: true
+    });
+
+    //Make sure to add the slider to the map ;-)
+    map.addControl(sliderControl);
+    //An initialize the slider
+    sliderControl.startSlider();
 
 
     egyptLayer.on('click', function(e) {

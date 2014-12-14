@@ -1,9 +1,10 @@
 //state class
-function Incident(id, catId, lat, lng) {
+function Incident(id, catId, lat, lng, time) {
   this.id = id;
   this.catId = catId;
   this.lat = lat;
   this.lng = lng;
+  this.time = time;
   this.category = null;
 }
 
@@ -31,7 +32,7 @@ var incidents = new function() {
 
     jQuery.each(data, function(index, item) {
       incident = new Incident(item.incident.incidentid, item.categories[0].category.id,
-        item.incident.locationlatitude, item.incident.locationlongitude);
+        item.incident.locationlatitude, item.incident.locationlongitude, item.incident.incidentdate);
 
       //get category
       incident.category = categories.findById(incident.catId);
