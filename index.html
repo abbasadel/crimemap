@@ -44,33 +44,28 @@
       margin-right: 8px;
       opacity: 0.7;
     }
-
-    .categories li{
+    .categories li {
       list-style: none;
       margin: 2px 0px;
       padding: 2px;
     }
-
-    .categories li.selected{
+    .categories li.selected {
       border: 1px solid #e5e5e5;
       background-color: #e5e5e5;
     }
-
     #leaflet-slider {
       width: 600px !important;
       margin: 20px;
     }
-
-    .title{
+    .title {
       width: 470px;
     }
-
-  #slider-timestamp{
-    width: 100%;
-    margin-top: 10px;
-    background-color: none;
-    text-align: center;
-  }
+    #slider-timestamp {
+      width: 100%;
+      margin-top: 10px;
+      background-color: none;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -97,7 +92,7 @@
   <script>
     var colorOption = 'INC'; //AREA, POP
     var selectedCategories = [];
-    var markers = [];
+    var markersLayer = L.layerGroup();
     var map = L.map('map', {
       zoomControl: false
     }).setView([28.285033294640684, 30.30029296875], 7);
@@ -154,16 +149,18 @@
         incidentsCount = 0;
 
         //count incidents by selected categories
-        if(selectedCategories.length > 0){
-          jQuery.each(feature.properties.incidents, function(i, incident){
-            if(incident.category == null) return;
-            if($.inArray(parseInt(incident.category.id), selectedCategories) > -1
-              || $.inArray(parseInt(incident.category.parentId), selectedCategories) > -1){
+        if (selectedCategories.length > 0) {
+
+          jQuery.each(feature.properties.incidents, function(i, incident) {
+            if (incident.category == null) return;
+            if ($.inArray(parseInt(incident.category.id), selectedCategories) > -1 || $.inArray(parseInt(incident.category.parentId), selectedCategories) > -1) {
               incidentsCount++;
             }
           });
-          console.log('name:' + feature.properties.name + ' counts: ' + incidentsCount + ' of total:' + feature.properties.incidents.length);
-        }else{
+
+
+          //console.log('name:' + feature.properties.name + ' counts: ' + incidentsCount + ' of total:' + feature.properties.incidents.length);
+        } else {
           incidentsCount = feature.properties.incidents.length;
         }
 
@@ -220,19 +217,14 @@
 
       });
 
-
-      //make marker
-
-      markers.push(
-        L.circleMarker(latLng, {time: incident.time, color: '#ff0000'}).bindPopup(incident.time)
-      )
       //if(key > 100) return false; //limit
     });
 
 
+
+
     egyptLayer.addTo(map);
-    var markersLayer = L.layerGroup(markers.reverse());
-    markersLayer.addTo(map);
+
 
 
     function resetLayers() {
@@ -245,9 +237,9 @@
         }
         var state = states.findByName(feature.properties.name);
         var contents = ['<b>', feature.properties.name, ' (', getPercentageValue(feature).toFixed(2), '%)', '</b>', '<br />',
-        'Incidents: ', count, ' (', (count * 100 / incidents.total).toFixed(2), '%)', '<br />',
-        'Population: ', state.population.format(), ' (', (state.population * 100 / states.totalPopulation).toFixed(2), '%)', '<br />',
-        'Area: ', state.area.format(), ' km<sup>2</sup>', ' (', (state.area * 100 / states.totalArea).toFixed(2), '%)', '<br />'
+          'Incidents: ', count, ' (', (count * 100 / incidents.total).toFixed(2), '%)', '<br />',
+          'Population: ', state.population.format(), ' (', (state.population * 100 / states.totalPopulation).toFixed(2), '%)', '<br />',
+          'Area: ', state.area.format(), ' km<sup>2</sup>', ' (', (state.area * 100 / states.totalArea).toFixed(2), '%)', '<br />'
         ].join('');
         //feature.properties.name + " " + count * 100 / incidents.total
         layer.bindPopup(contents);
@@ -259,7 +251,65 @@
 
     resetLayers();
 
+    function showMarkers() {
+      markersLayer.clearLayers();
+      markers = [];
+
+      jQuery.each(incidents.all(), function(key, incident) {
+        var latLng = new L.latLng(incident.lat, incident.lng);
+
+        if (selectedCategories.length > 0) {
+
+          if (incident.getCategory() && $.inArray(parseInt(incident.getCategory().id), selectedCategories) > -1 ) {
+
+            //make marker
+            if (incident.getCategory()) {
+              marker = L.circleMarker(latLng, {
+                time: incident.time,
+                color: '#' + incident.color()
+              }).bindPopup(incident.time)
+              markers.push(marker);
+              markersLayer.addLayer(marker);
+            }
+          }
+
+        } else {
+
+          //make marker
+          if (incident.category) {
+            marker = L.circleMarker(latLng, {
+              time: incident.time,
+              color: '#' + incident.color()
+            }).bindPopup(incident.time)
+            markers.push(marker);
+            markersLayer.addLayer(marker);
+          }
+
+        }
+
+
+
+      });
+
+
+    }
+
+    showMarkers();
+    markersLayer.addTo(map);
+
+
     /**** CONTROLS ****/
+
+    var sliderControl = L.control.sliderControl({
+      position: "bottomleft",
+      layer: markersLayer,
+      range: true
+    });
+
+    //Make sure to add the slider to the map ;-)
+    map.addControl(sliderControl);
+    //An initialize the slider
+    sliderControl.startSlider();
 
 
 
@@ -274,8 +324,9 @@
         jQuery.each(categories.all(), function(index, item) {
           //use parent categories only
           list.push(
-            ['<li data-value="', item.id ,'"><i id="cat' , item.id , '" style="background:#' , item.color , '" ></i> ' ,
-            item.name , ' (' + item.allIncidents().length + ')</li>'].join('')
+            ['<li data-value="', item.id, '"><i id="cat', item.id, '" style="background:#', item.color, '" ></i> ',
+              item.name, ' (' + item.allIncidents().length + ')</li>'
+            ].join('')
           );
         });
         div.innerHTML = "<b>Incedents per Categories</b><hr/>";
@@ -315,16 +366,16 @@
     });
 
     sliderOptionsControl.onAdd = function(map) {
-      var div = L.DomUtil.create('div', 'info slider-options');
-      var content = [
-      '<input id="incidentSlider" type="checkbox" name="slider" value="true" checked>Show Incident Slider</input>'
-      ]
+        var div = L.DomUtil.create('div', 'info slider-options');
+        var content = [
+          '<input id="incidentSlider" type="checkbox" name="slider" value="true" checked>Show Incident Slider</input>'
+        ]
 
-      div.innerHTML = "<b>Map Options:</b><hr/>";
-      div.innerHTML += content.join('<br>');
-      //console.log(div);
-      return div;
-    } //end onAdd
+        div.innerHTML = "<b>Map Options:</b><hr/>";
+        div.innerHTML += content.join('<br>');
+        //console.log(div);
+        return div;
+      } //end onAdd
 
     sliderOptionsControl.addTo(map);
 
@@ -337,7 +388,7 @@
         var div = L.DomUtil.create('div', 'info title')
         div.innerHTML = '<h1>Choropleth Map of Crimes in Egypt</h1>';
         div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.total + '</b> incidents</p>';
-        div.innerHTML += '<p><b>Total Population:</b> ' + states.totalPopulation.format()  + ' <b>Total Area:</b> ' + states.totalArea.format() +  'km<sup>2</sup></p>';
+        div.innerHTML += '<p><b>Total Population:</b> ' + states.totalPopulation.format() + ' <b>Total Area:</b> ' + states.totalArea.format() + 'km<sup>2</sup></p>';
         return div;
       } //end onAdd
 
@@ -378,16 +429,7 @@
 
     legend.addTo(map);
 
-    var sliderControl = L.control.sliderControl({
-      position: "bottomleft",
-      layer: markersLayer,
-      range: true
-    });
 
-    //Make sure to add the slider to the map ;-)
-    map.addControl(sliderControl);
-    //An initialize the slider
-    sliderControl.startSlider();
 
 
     egyptLayer.on('click', function(e) {
@@ -401,34 +443,43 @@
 
 
     $('#incidentSlider').change(function() {
-      if(this.checked) {
+      if (this.checked) {
         map.addLayer(markersLayer);
         map.addControl(sliderControl);
         sliderControl.startSlider();
-      }else{
+      } else {
         map.removeLayer(markersLayer);
         map.removeControl(sliderControl);
       }
     });
 
-    $( ".categories li" ).click(function() {
-      categoryId = $( this ).data('value');
-      if($(this).hasClass('selected')){
-        $( this ).removeClass( "selected" );
+    $(".categories li").click(function() {
+      categoryId = $(this).data('value');
+      if ($(this).hasClass('selected')) {
+        $(this).removeClass("selected");
         var index = selectedCategories.indexOf(categoryId);
         selectedCategories.splice(index, 1);
 
-      }else{
-        $( this ).addClass( "selected" );
+      } else {
+        $(this).addClass("selected");
         selectedCategories.push(categoryId);
       }
       resetLayers();
+      showMarkers();
+
+      map.removeControl(sliderControl);
+      sliderControl = L.control.sliderControl({
+        position: "bottomleft",
+        layer: markersLayer,
+        range: true
+      });
+
+      map.addControl(sliderControl);
+      sliderControl.startSlider();
+
+
       console.log(selectedCategories);
     });
-
-
-
-
   </script>
 </body>
 

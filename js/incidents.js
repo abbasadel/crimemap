@@ -6,7 +6,26 @@ function Incident(id, catId, lat, lng, time) {
   this.lng = lng;
   this.time = time;
   this.category = null;
+
+  this.getCategory = function() {
+    if (this.category != null) {
+      if (this.category.parent != null) {
+        return this.category.parent;
+      }
+      return this.category
+    }
+    return null;
+  }
+
+  this.color = function() {
+    if (this.getCategory()) {
+      return this.getCategory().color;
+    }
+    return '#ffffff';
+  }
+
 }
+
 
 var incidents = new function() {
   this.url = 'json/incidents.json';
@@ -36,7 +55,7 @@ var incidents = new function() {
 
       //get category
       incident.category = categories.findById(incident.catId);
-      if(incident.category != null){
+      if (incident.category != null) {
         incident.category.incidents.push(incident);
       }
 
@@ -61,7 +80,7 @@ var incidents = new function() {
     this.calcTotal();
   }
 
-  this.calcTotal = function(){
+  this.calcTotal = function() {
     this.total = this.data.length;
   }
 
