@@ -66,10 +66,23 @@
       background-color: none;
       text-align: center;
     }
+    #loading{
+      z-index: 11;
+      text-align: center;
+      font: 14px/16px Arial, Helvetica, sans-serif;
+      /*padding-top: 45%;
+      padding-bottom: 55%;*/
+      position: absolute;
+      background: url("images/loading.gif") no-repeat center center;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+    }
   </style>
 </head>
 
 <body>
+  <div id="loading" style="width:100%, height:100%; z-index:100">LOADING ... </div>
   <div id="map" style="width:100%"></div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -147,9 +160,15 @@
 
       if (feature.properties.incidents) {
         incidentsCount = 0;
+        total = 1;
 
         //count incidents by selected categories
         if (selectedCategories.length > 0) {
+
+          jQuery.each(selectedCategories, function(i, cid) {
+            category = categories.findById(cid);
+            total += category.allIncidents().length;
+          });
 
           jQuery.each(feature.properties.incidents, function(i, incident) {
             if (incident.category == null) return;
@@ -162,10 +181,11 @@
           //console.log('name:' + feature.properties.name + ' counts: ' + incidentsCount + ' of total:' + feature.properties.incidents.length);
         } else {
           incidentsCount = feature.properties.incidents.length;
+          total = incidents.total;
         }
 
 
-        var percent = incidentsCount * 100 / incidents.total;
+        var percent = incidentsCount * 100 / total;
         var state = states.findByName(feature.properties.name);
 
         if (colorOption == 'POP') {
@@ -230,14 +250,40 @@
     function resetLayers() {
       jQuery.each(egyptLayer.getLayers(), function(k, layer) {
         feature = layer.feature;
-        count = 0;
+
+        incidentsCount = 0;
+        total = 1;
+
+        //count incidents by selected categories
+        if (selectedCategories.length > 0) {
+
+          jQuery.each(selectedCategories, function(i, cid) {
+            category = categories.findById(cid);
+            total += category.allIncidents().length;
+          });
+
+          jQuery.each(feature.properties.incidents, function(i, incident) {
+            if (incident.category == null) return;
+            if ($.inArray(parseInt(incident.getCategory().id), selectedCategories) > -1) {
+              incidentsCount++;
+            }
+          });
+
+
+          //console.log('name:' + feature.properties.name + ' counts: ' + incidentsCount + ' of total:' + feature.properties.incidents.length);
+        } else {
+          incidentsCount = feature.properties.incidents.length;
+          total = incidents.total;
+        }
+
+
 
         if (feature.properties.incidents) {
           count = feature.properties.incidents.length;
         }
         var state = states.findByName(feature.properties.name);
         var contents = ['<b>', feature.properties.name, ' (', getPercentageValue(feature).toFixed(2), '%)', '</b>', '<br />',
-          'Incidents: ', count, ' (', (count * 100 / incidents.total).toFixed(2), '%)', '<br />',
+          'Incidents: ', incidentsCount, ' (', (incidentsCount * 100 / total).toFixed(2), '%)', '<br />',
           'Population: ', state.population.format(), ' (', (state.population * 100 / states.totalPopulation).toFixed(2), '%)', '<br />',
           'Area: ', state.area.format(), ' km<sup>2</sup>', ' (', (state.area * 100 / states.totalArea).toFixed(2), '%)', '<br />'
         ].join('');
@@ -255,7 +301,7 @@
       markersLayer.clearLayers();
       markers = [];
 
-      jQuery.each(incidents.all(), function(key, incident) {
+      jQuery.each(incidents.all().reverse(), function(key, incident) {
         var latLng = new L.latLng(incident.lat, incident.lng);
 
         if (selectedCategories.length > 0) {
@@ -480,6 +526,8 @@
 
       console.log(selectedCategories);
     });
+
+    $('#loading').hide();
   </script>
 </body>
 
