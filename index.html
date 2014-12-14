@@ -44,6 +44,18 @@
       margin-right: 8px;
       opacity: 0.7;
     }
+
+    .categories li{
+      list-style: none;
+      margin: 2px 0px;
+      padding: 2px;
+    }
+
+    .categories li.selected{
+      border: 1px solid #e5e5e5;
+      background-color: #e5e5e5;
+    }
+
     #leaflet-slider {
       width: 600px !important;
       margin: 20px;
@@ -84,6 +96,7 @@
 
   <script>
     var colorOption = 'INC'; //AREA, POP
+    var selectedCategories = [];
     var markers = [];
     var map = L.map('map', {
       zoomControl: false
@@ -136,19 +149,36 @@
 
     function getPercentageValue(feature) {
       var colorValue = 0;
-      if (feature.properties.incidents) {
 
-        var percent = feature.properties.incidents.length * 100 / incidents.total;
+      if (feature.properties.incidents) {
+        incidentsCount = 0;
+
+        //count incidents by selected categories
+        if(selectedCategories.length > 0){
+          jQuery.each(feature.properties.incidents, function(i, incident){
+            if(incident.category == null) return;
+            if($.inArray(parseInt(incident.category.id), selectedCategories) > -1
+              || $.inArray(parseInt(incident.category.parentId), selectedCategories) > -1){
+              incidentsCount++;
+            }
+          });
+          console.log('name:' + feature.properties.name + ' counts: ' + incidentsCount + ' of total:' + feature.properties.incidents.length);
+        }else{
+          incidentsCount = feature.properties.incidents.length;
+        }
+
+
+        var percent = incidentsCount * 100 / incidents.total;
         var state = states.findByName(feature.properties.name);
 
         if (colorOption == 'POP') {
-          colorValue = feature.properties.incidents.length * 1000 / state.population;
+          colorValue = incidentsCount * 1000 / state.population;
         } else if (colorOption == 'AREA') {
-          colorValue = feature.properties.incidents.length * 1000 / state.area;
+          colorValue = incidentsCount * 1000 / state.area;
         } else {
           colorValue = percent;
         }
-        console.log(state.name + ' ' + colorValue);
+        //console.log(state.name + ' ' + colorValue);
       }
       return colorValue;
     }
@@ -244,12 +274,12 @@
         jQuery.each(categories.all(), function(index, item) {
           //use parent categories only
           list.push(
-            '<i id="cat' + item.id + '" style="background:#' + item.color + '"></i> ' +
-            item.name + ' (' + item.allIncidents().length + ')'
+            ['<li data-value="', item.id ,'"><i id="cat' , item.id , '" style="background:#' , item.color , '" ></i> ' ,
+            item.name , ' (' + item.allIncidents().length + ')</li>'].join('')
           );
         });
-        div.innerHTML = "<b>Categories</b><hr/>";
-        div.innerHTML += list.join('<br>');
+        div.innerHTML = "<b>Incedents per Categories</b><hr/>";
+        div.innerHTML += list.join('');
         //console.log(div);
         return div;
       } //end onAdd
@@ -380,6 +410,25 @@
         map.removeControl(sliderControl);
       }
     });
+
+    $( ".categories li" ).click(function() {
+      categoryId = $( this ).data('value');
+      if($(this).hasClass('selected')){
+        $( this ).removeClass( "selected" );
+        var index = selectedCategories.indexOf(categoryId);
+        selectedCategories.splice(index, 1);
+
+      }else{
+        $( this ).addClass( "selected" );
+        selectedCategories.push(categoryId);
+      }
+      resetLayers();
+      console.log(selectedCategories);
+    });
+
+
+
+
   </script>
 </body>
 
