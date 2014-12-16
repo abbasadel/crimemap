@@ -120,12 +120,12 @@
 
 
 
-    cairo = $.ajax({
-      url: "geojson/cairo.geojson",
-      dataType: "json",
-      async: false
-    }).responseJSON;
-    console.log('geojson/cairo.geojson loaded');
+    // cairo = $.ajax({
+    //   url: "geojson/cairo.geojson",
+    //   dataType: "json",
+    //   async: false
+    // }).responseJSON;
+    // console.log('geojson/cairo.geojson loaded');
 
     egypt = $.ajax({
       url: "geojson/egypt-mploygon.geojson",
@@ -220,6 +220,7 @@
     egyptLayer = L.geoJson(egypt, {
       style: style
     });
+    egypt = null; // free memory
 
 
     jQuery.each(incidents.all(), function(key, incident) {
