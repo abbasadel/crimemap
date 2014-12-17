@@ -112,11 +112,18 @@
 
 
     L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+      attribution: '** Source: <a href="http://en.wikipedia.org/wiki/Egypt">Wikipedia</a> - Develoeped at <a href="www.uji.es" target="_blank"> Universitat Jaume I</a>, Catellon, Spain  - Published at 10 December 2014 - Source code avaiable at <a href="https://github.com/abbasadel/crimemap" target="_blank">github</a> - &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
       subdomains: 'abcd',
       minZoom: 0,
       maxZoom: 18
     }).addTo(map);
+
+
+    var Hydda_Full = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+      minZoom: 0,
+      maxZoom: 18,
+      attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
 
 
 
@@ -434,8 +441,8 @@
     titleControl.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'info title')
         div.innerHTML = '<h1>Choropleth Map of Crimes in Egypt</h1>';
-        div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.total + '</b> incidents</p>';
-        div.innerHTML += '<p><b>Total Population:</b> ' + states.totalPopulation.format() + ' <b>Total Area:</b> ' + states.totalArea.format() + 'km<sup>2</sup></p>';
+        div.innerHTML += '<p>Based on <a href="http://zabatak.com">Zabatk.com</a> crowdsourced information of total <b>' + incidents.total + '</b> incidents</ br>';
+        div.innerHTML += '<b>Total Population**:</b> ' + states.totalPopulation.format() + ' <b>Total Area**:</b> ' + states.totalArea.format() + 'km<sup>2</sup></p>';
         return div;
       } //end onAdd
 
