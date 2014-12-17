@@ -48,6 +48,7 @@
       list-style: none;
       margin: 2px 0px;
       padding: 2px;
+      cursor: pointer;
     }
     .categories li.selected {
       border: 1px solid #e5e5e5;
@@ -111,20 +112,23 @@
     }).setView([28.285033294640684, 30.30029296875], 7);
 
 
-    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-      attribution: '** Source: <a href="http://en.wikipedia.org/wiki/Egypt">Wikipedia</a> - Develoeped at <a href="www.uji.es" target="_blank"> Universitat Jaume I</a>, Catellon, Spain  - Published at 10 December 2014 - Source code avaiable at <a href="https://github.com/abbasadel/crimemap" target="_blank">github</a> - &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-      subdomains: 'abcd',
-      minZoom: 0,
-      maxZoom: 18
-    }).addTo(map);
+    copyright = '** Source: <a href="http://en.wikipedia.org/wiki/Egypt">Wikipedia</a> - Develoeped at <a href="www.uji.es" target="_blank"> Universitat Jaume I</a>, Catellon, Spain  - Published at 10 December 2014 - Source code avaiable at <a href="https://github.com/abbasadel/crimemap" target="_blank">github</a> - &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
+    grey = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+    colored = 'http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png';
 
-
-    var Hydda_Full = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-      minZoom: 0,
-      maxZoom: 18,
-      attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    tileLayer = L.tileLayer(grey, {
+      attribution: copyright
     });
 
+    tileLayer.addTo(map);
+    //http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png
+    function changeMap(mapUrl){
+      tileLayer.setUrl(mapUrl).redraw();
+    }
+
+
+
+    //
 
 
     // cairo = $.ajax({
@@ -422,7 +426,8 @@
     sliderOptionsControl.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'info slider-options');
         var content = [
-          '<input id="incidentSlider" type="checkbox" name="slider" value="true" checked>Show Incident Slider</input>'
+          '<input id="incidentSlider" type="checkbox" name="slider" value="true" checked>Show Incident Slider</input>',
+          '<input id="mapColor" type="checkbox" name="mapColor" checked>Use Greyscale Map</input>'
         ]
 
         div.innerHTML = "<b>Map Options:</b><hr/>";
@@ -504,6 +509,15 @@
       } else {
         map.removeLayer(markersLayer);
         map.removeControl(sliderControl);
+      }
+    });
+
+
+    $('#mapColor').change(function() {
+      if (this.checked) {
+        changeMap(grey);
+      } else {
+        changeMap(colored);
       }
     });
 
